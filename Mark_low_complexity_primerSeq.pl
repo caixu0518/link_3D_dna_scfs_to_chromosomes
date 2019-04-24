@@ -4,13 +4,13 @@ use strict;
 
 my $in0 = $ARGV[0]; ##- primers   include Up and down sequences 
 my $ratio = 0.5;
-
+my $cutOffLen = 15;
 
    &process();
 sub process {
 
    my $UpDownSeq = "UpDown.fa";
-      &getFasta($in0, $UpDownSeq);
+      &getFasta($in0, $cutOffLen, $UpDownSeq);
 
    my %id2seq = ();
       &indexFasta($UpDownSeq, \%id2seq);
@@ -50,7 +50,7 @@ sub rm {
 
 sub getFasta {
      
-    my ($primers, $outFasta) = @_;
+    my ($primers, $cutOffLen, $outFasta) = @_;
 
     open IN0, $primers;
     open OUT0, ">$outFasta";
@@ -59,8 +59,8 @@ sub getFasta {
       my @temp = split(/\s+/, $_);
       my ($id5, $id3) = ("$temp[0]_$temp[1]_5", "$temp[0]_$temp[1]_3");
          $temp[-2] = reverse($temp[-2]);
-      my $seq5 = substr($temp[-2], 0, 30);
-      my $seq3 = substr($temp[-1], 0, 30);
+      my $seq5 = substr($temp[-2], 0, $cutOffLen);
+      my $seq3 = substr($temp[-1], 0, $cutOffLen);
       print OUT0 ">$id5\n$seq5\n";
       print OUT0 ">$id3\n$seq3\n";
     }
